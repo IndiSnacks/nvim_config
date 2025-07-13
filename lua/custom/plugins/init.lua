@@ -56,28 +56,62 @@ return {
       }
     end,
   },
-  -- html auto-tag
+  -- Markdown Preview
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
+  --Twilight : Dims parts of my code that I don't need to focus on
+  {
+    'folke/twilight.nvim',
+    -- Add a config function to explicitly call setup
+    config = function()
+      require('twilight').setup {
+        dimming = {
+          alpha = 0.25, -- amount of dimming
+          -- we try to get the foreground from the highlight groups or fallback color
+          color = { 'Normal', '#ffffff' },
+          term_bg = '#000000', -- if guibg=NONE, this will be used to calculate text color
+          inactive = false, -- when true, other windows will be fully dimmed (unless they contain the same buffer)
+        },
+        context = 10, -- amount of lines we will try to show around the current line
+        treesitter = true, -- use treesitter when available for the filetype
+        -- treesitter is used to automatically expand the visible text,
+        -- but you can further control the types of nodes that should always be fully expanded
+        expand = { -- for treesitter, we we always to expand to the top-most ancestor with these types
+          'function',
+          'method',
+          'table',
+          'if_statement',
+        },
+        exclude = {}, -- exclude these filetypes
+      }
+    end,
+  },
+  -- nvim-ts-autotag: Automatically closes and renames HTML/JSX tags
   {
     'windwp/nvim-ts-autotag',
-    -- Make sure it loads only when needed (e.g., when editing HTML/JSX/TSX)
     ft = {
       'html',
+      'javascript',
+      'typescript',
       'javascriptreact',
       'typescriptreact',
-      'jsx',
-      'tsx',
-      'xml',
+      'css',
+      'scss',
       'vue',
       'svelte',
+      'astro',
+      'tsx',
+      'jsx',
     },
     config = function()
-      require('nvim-ts-autotag').setup {
-        -- Optional: configure if you want to disable for certain tags or enable for others
-        -- For most users, default settings are good.
-        enable_rename = true, -- Auto-rename closing tag when opening tag changes
-        enable_close = true, -- Auto-close tags (e.g., typing <div> gives </div>)
-        enable_jsx_close = true, -- Auto-close for JSX components
-      }
+      require('nvim-ts-autotag').setup()
     end,
   },
 }
